@@ -59,3 +59,7 @@ typings/
 
 # next.js build output
 .next
+
+# security tokens
+dw-auth.json
+shopify_auth.js

@@ -1,0 +1,26 @@
+{
+  "name": "datawarehouse_scheduler_nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wearecabinet/datawarehouse_scheduler_nodejs.git"
+  },
+  "author": "gsuppy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wearecabinet/datawarehouse_scheduler_nodejs/issues"
+  },
+  "homepage": "https://github.com/wearecabinet/datawarehouse_scheduler_nodejs#readme",
+  "dependencies": {
+    "@google-cloud/storage": "^4.1.0",
+    "axios": "^0.19.0",
+    "circular-json": "^0.5.9",
+    "express": "^4.17.1",
+    "express-async-handler": "^1.1.4"
+  }
+}
