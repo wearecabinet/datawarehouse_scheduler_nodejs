@@ -5,20 +5,33 @@ const shopify = require("./shopify.js");
 // Express App
 const app = express();
 
-//Pull data from Shopify API and create JSON file
-app.get(
-  "/shopify_customers",
-  asyncHandler(async (req, res) => {
-    await shopify.pullData();
-    res.sendStatus(200);
-  })
-);
+/* Shopify API Calls*/
 
-//Upload to bucket - store JSON in Cloud Storage
-app.get("/shopify_customers_upload", (req, res) => {
-  shopify.jsonUpload();
+//Pull customer data from Shopify API and create JSON file
+app.get("/shopify_customers", (req, res) => {
+  shopify.customerPull();
   res.sendStatus(200);
 });
+
+//Upload to GCS bucket
+app.get("/shopify_customers_upload", (req, res) => {
+  shopify.customerUploadJSON();
+  res.sendStatus(200);
+});
+
+//Pull order data from Shopify API and create JSON file
+app.get("/shopify_orders", (req, res) => {
+  shopify.orderPull();
+  res.sendStatus(200);
+});
+
+//Upload to GCS bucket
+app.get("/shopify_orders_upload", (req, res) => {
+  shopify.orderUploadJSON();
+  res.sendStatus(200);
+});
+
+/* END Shopify Section */
 
 //Ingest to BigQuery
 app.get("/shopify_bq", (req, res) => {

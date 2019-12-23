@@ -12,35 +12,59 @@ const bucket = storage.bucket(bucketName);
 
 // Shopify Configs
 const shopifyAuth = require("./shopify_auth.js");
-
-const customer_url =
+let shopifyAPIUrl =
   "https://" +
   shopifyAuth.username +
   ":" +
   shopifyAuth.password +
-  "@cabinet-dev.myshopify.com/admin/api/2019-10/customers.json";
-//Pull shopify data from API call
-const pullData = async () => {
-  let shopifyData = await axios.get(customer_url);
+  "@cabinet-dev.myshopify.com/admin/api/2019-10/";
+let customerFileName;
+let orderFileName;
+
+//Pull Shopify data from API call
+const pullData = async (url, fileName) => {
+  let shopifyData = await axios.get(url);
   shopifyData = CircularJSON.stringify(shopifyData);
 
-  const file = await fs.writeFile(
-    "shopify_customers.json",
-    shopifyData,
-    err => {
-      if (err) throw err;
-      console.log("File is created successfully.");
-    }
-  );
-};
+  fileName = url.split("/");
+  const date = new Date().toJSON();
+  fileName = fileName[fileName.length - 1] + date;
 
-const jsonUpload = () => {
-  bucket.upload("shopify_customers.json", (err, copiedFile, apiResponse) => {
-    console.log("json uploaded");
+  const file = await fs.writeFile(fileName, shopifyData, err => {
+    if (err) throw err;
+    console.log("File is created successfully.");
   });
 };
 
+const uploadJSON = fileName => {
+  bucket.upload(fileName, (err, copiedFile, apiResponse) => {
+    console.log("JSON uploaded");
+  });
+};
+
+//Shopify Customer API calls
+
+const customerPull = () => {
+  pullData(shopifyAPIUrl + "customers.json", customerFileName);
+};
+
+const customerJsonUpload = () => {
+  uploadJSON(fileName);
+};
+
+//Shopify Orders API calls
+
+const orderPull = () => {
+  pullData(shopifyAPIUrl + "orders.json", orderFileName);
+};
+
+const orderUploadJSON = () => {
+  uploadJSON();
+};
+
 module.exports = {
-  pullData: pullData,
-  jsonUpload: jsonUpload
+  customerPull: customerPull,
+  customerUploadJSON: customerUploadJSON,
+  orderPull: orderPull,
+  orderUploadJSON: orderUploadJSON
 };
