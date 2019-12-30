@@ -2,13 +2,15 @@ const fs = require("fs");
 const axios = require("axios");
 const CircularJSON = require("circular-json");
 
-const { Storage } = require("@google-cloud/storage");
+/*Config Section*/
 // GCP Cloud Storage Configs
+const { Storage } = require("@google-cloud/storage");
 const projectId = "cabinet-datawarehouse";
 const keyFilename = "./dw-auth.json";
 const storage = new Storage({ projectId, keyFilename });
-const bucketName = "wearecabinet_shopify_customer_json";
-const bucket = storage.bucket(bucketName);
+const shopifyOrderBucket = "wearecabinet_shopify_order";
+const shopifyCustomerBucket = "wearecabinet_shopify_customer";
+const folderJSON = __dirname + "/JSON/";
 
 // Shopify Configs
 const shopifyAuth = require("./shopify_auth.js");
@@ -18,48 +20,53 @@ let shopifyAPIUrl =
   ":" +
   shopifyAuth.password +
   "@cabinet-dev.myshopify.com/admin/api/2019-10/";
-let customerFileName;
-let orderFileName;
+
+/*End Configs*/
 
 //Pull Shopify data from API call
-const pullData = async (url, fileName) => {
+const pullData = async url => {
   let shopifyData = await axios.get(url);
   shopifyData = CircularJSON.stringify(shopifyData);
 
-  fileName = url.split("/");
-  const date = new Date().toJSON();
-  fileName = fileName[fileName.length - 1] + date;
+  let fileName = url.split("/");
+  const date = new Date().toJSON().split("T")[0];
+  fileName = fileName[fileName.length - 1].split(".")[0] + "-" + date + ".json";
 
-  const file = await fs.writeFile(fileName, shopifyData, err => {
+  const file = await fs.writeFile(folderJSON + fileName, shopifyData, err => {
     if (err) throw err;
     console.log("File is created successfully.");
   });
 };
 
-const uploadJSON = fileName => {
-  bucket.upload(fileName, (err, copiedFile, apiResponse) => {
-    console.log("JSON uploaded");
+//GCS Bucket Upload Function
+const uploadJSON = async (bucketName, bucketType) => {
+  const bucket = storage.bucket(bucketName);
+  let fileName;
+
+  fs.readdir(folderJSON, (err, files) => {
+    fileName =
+      folderJSON + files.filter(fileName => fileName.startsWith(bucketType))[0];
+
+    bucket.upload(fileName, (err, copiedFile, apiResponse) => {
+      console.log("JSON uploaded");
+    });
   });
 };
 
 //Shopify Customer API calls
-
 const customerPull = () => {
-  pullData(shopifyAPIUrl + "customers.json", customerFileName);
+  pullData(shopifyAPIUrl + "customers.json");
 };
-
-const customerJsonUpload = () => {
-  uploadJSON(fileName);
+const customerUploadJSON = () => {
+  uploadJSON(shopifyCustomerBucket, "customers");
 };
 
 //Shopify Orders API calls
-
 const orderPull = () => {
-  pullData(shopifyAPIUrl + "orders.json", orderFileName);
+  pullData(shopifyAPIUrl + "orders.json");
 };
-
 const orderUploadJSON = () => {
-  uploadJSON();
+  uploadJSON(shopifyOrderBucket, "orders");
 };
 
 module.exports = {

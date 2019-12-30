@@ -1,11 +1,15 @@
 const express = require("express");
-const asyncHandler = require("express-async-handler");
 const shopify = require("./shopify.js");
 
 // Express App
 const app = express();
 
 /* Shopify API Calls*/
+
+//Test for API up and running
+app.get("/", (req, res) => {
+  res.status(200).send("Cabinet Datawarehouse Backend Up and Running!");
+});
 
 //Pull customer data from Shopify API and create JSON file
 app.get("/shopify_customers", (req, res) => {
