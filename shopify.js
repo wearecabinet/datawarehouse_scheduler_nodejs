@@ -10,21 +10,16 @@ const keyFilename = "./dw-auth.json";
 const storage = new Storage({ projectId, keyFilename });
 const shopifyOrderBucket = "wearecabinet_shopify_order";
 const shopifyCustomerBucket = "wearecabinet_shopify_customer";
-const folderJSON = __dirname + "/JSON/";
+const folderJSON = __dirname + "/tmp/";
 
 // Shopify Configs
-const shopifyAuth = require("./shopify_auth.js");
-let shopifyAPIUrl =
-  "https://" +
-  shopifyAuth.username +
-  ":" +
-  shopifyAuth.password +
-  "@cabinet-dev.myshopify.com/admin/api/2019-10/";
+const shopify = require("./shopify_auth.js");
+let shopifyAPIUrl = shopify.url;
 
 /*End Configs*/
 
 //Pull Shopify data from API call
-const pullData = async url => {
+const pullData = async (url, bucketName) => {
   let shopifyData = await axios.get(url);
   shopifyData = CircularJSON.stringify(shopifyData);
 
@@ -32,7 +27,9 @@ const pullData = async url => {
   const date = new Date().toJSON().split("T")[0];
   fileName = fileName[fileName.length - 1].split(".")[0] + "-" + date + ".json";
 
-  const file = await fs.writeFile(folderJSON + fileName, shopifyData, err => {
+  console.log(fileName);
+
+  await fs.writeFile(folderJSON + fileName, shopifyData, err => {
     if (err) throw err;
     console.log("File is created successfully.");
   });
@@ -55,7 +52,7 @@ const uploadJSON = async (bucketName, bucketType) => {
 
 //Shopify Customer API calls
 const customerPull = () => {
-  pullData(shopifyAPIUrl + "customers.json");
+  pullData(shopifyAPIUrl + "customers.json", shopifyCustomerBucket);
 };
 const customerUploadJSON = () => {
   uploadJSON(shopifyCustomerBucket, "customers");

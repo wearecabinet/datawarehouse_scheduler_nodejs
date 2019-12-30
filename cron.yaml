@@ -1,18 +1,17 @@
-<!-- prettier-ignore -->
 cron:
-- description: "weekly shopify customers pull"
-  url: /shopify_customers
-  schedule: every monday 04:00
-  timezone: EST
-- description: "weekly shopify customers upload"
-  url: /shopify_customers_upload
-  schedule: every monday 04:30
-  timezone: EST
-- description: "weekly shopify orders pull"
-  url: /shopify_orders
-  schedule: every monday 05:00
-  timezone: EST
-- description: "weekly shopify orders upload"
-  url: /shopify_orders_upload
-  schedule: every monday 05:30
-  timezone: EST
+  - description: "weekly shopify customers pull"
+    url: /shopify_customers
+    schedule: every monday 04:00
+    timezone: EST
+  - description: "weekly shopify customers upload"
+    url: /shopify_customers_upload
+    schedule: every monday 04:30
+    timezone: EST
+  - description: "weekly shopify orders pull"
+    url: /shopify_orders
+    schedule: every monday 05:00
+    timezone: EST
+  - description: "weekly shopify orders upload"
+    url: /shopify_orders_upload
+    schedule: every monday 05:30
+    timezone: EST

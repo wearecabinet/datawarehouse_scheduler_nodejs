@@ -15,7 +15,8 @@ app.get("/", (req, res) => {
 
 //Pull customer data from Shopify API and create JSON file
 app.get("/shopify_customers", (req, res) => {
-  shopify.customerPull();
+  let data = shopify.customerPull();
+  console.log(data);
   res.sendStatus(200);
 });
 
