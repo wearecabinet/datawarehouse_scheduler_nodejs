@@ -1,3 +1,5 @@
+"use strict";
+
 const express = require("express");
 const shopify = require("./shopify.js");
 
@@ -43,7 +45,9 @@ app.get("/shopify_bq", (req, res) => {
 });
 
 /* Express Server and Port */
-const port = 8000;
+const port = process.env.PORT || 8000;
 app.listen(port, function() {
   console.log(`Listening on port ${port}`);
 });
+
+module.exports = app;
