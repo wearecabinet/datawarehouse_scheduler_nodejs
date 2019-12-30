@@ -10,7 +10,7 @@ const keyFilename = "./dw-auth.json";
 const storage = new Storage({ projectId, keyFilename });
 const shopifyOrderBucket = "wearecabinet_shopify_order";
 const shopifyCustomerBucket = "wearecabinet_shopify_customer";
-const folderJSON = __dirname + "/tmp/";
+const folderJSON = "/tmp/";
 
 // Shopify Configs
 const shopify = require("./shopify_auth.js");
